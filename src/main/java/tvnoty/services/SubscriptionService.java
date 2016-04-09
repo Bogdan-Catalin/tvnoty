@@ -13,7 +13,7 @@ public class SubscriptionService {
     SubscriberRepository subscriberRepository;
 
     public void subscribe(final String email, final List<String> imdbCodes) {
-        Subscriber subscriber = getUserForEmail(email);
+        Subscriber subscriber = subscriberRepository.findByEmail(email);
         if (subscriber == null) {
             subscriber = new Subscriber();
             subscriber.setEmail(email);
@@ -26,14 +26,10 @@ public class SubscriptionService {
     }
 
     public void unsubscribe(final String email, final List<String> imdbCodes) {
-        final Subscriber subscriber = getUserForEmail(email);
+        final Subscriber subscriber = subscriberRepository.findByEmail(email);
         if (subscriber != null) {
             subscriber.unsubscribe(imdbCodes);
             subscriberRepository.save(subscriber);
         }
-    }
-
-    private Subscriber getUserForEmail(final String email) {
-        return subscriberRepository.findAll().stream().filter(x -> x.getEmail().toLowerCase().equals(email.toLowerCase())).findFirst().get();
     }
 }
