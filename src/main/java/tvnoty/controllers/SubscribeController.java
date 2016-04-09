@@ -3,12 +3,15 @@ package tvnoty.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import tvnoty.controllers.models.ErrorResponseEnum;
 import tvnoty.core.database.repositories.SubscriberRepository;
 import tvnoty.services.SeriesDataGatheringService;
 import tvnoty.services.SubscriptionService;
@@ -18,8 +21,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @RestController
 public class SubscribeController {
@@ -39,31 +40,29 @@ public class SubscribeController {
             final HttpServletResponse response) {
         response.setCharacterEncoding("UTF-8");
 
+        final ObjectMapper om = new ObjectMapper();
+        om.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+
         if (!isValidEmail(email)) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return "Email is not valid";
+            return mapObjectToResponse(om, ErrorResponseEnum.INVALID_EMAIL);
         }
 
-        final ObjectMapper om = new ObjectMapper();
         List<String> subList = new ArrayList<>();
         try {
             subList = om.readValue(jsonSubscriptions, new TypeReference<List<String>>() {
             });
         } catch (final IOException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return "Badly formed subscription list";
+            return mapObjectToResponse(om, ErrorResponseEnum.INVALID_SUBSCRIBE_LIST);
         }
 
         subscriptionService.subscribe(email, subList);
         gatheringService.pullSpecificData(new HashSet<>(subList));
 
-        try {
-            response.setStatus(HttpStatus.OK.value());
-            return om.writeValueAsString(subscriberRepository.findAll());
-        } catch (final JsonProcessingException e) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return "Jackson is having a bad day and I am too :( sorry";
-        }
+        // TODO: remove this and send an OK message - keep only for testing
+        response.setStatus(HttpStatus.OK.value());
+        return mapObjectToResponse(om, subscriberRepository.findAll());
     }
 
     @RequestMapping(value = "/unsubscribe", method = RequestMethod.POST)
@@ -73,40 +72,40 @@ public class SubscribeController {
             final HttpServletResponse response) {
         response.setCharacterEncoding("UTF-8");
 
+        final ObjectMapper om = new ObjectMapper();
+
         if (!isValidEmail(email)) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return "Email is not valid";
+            return mapObjectToResponse(om, ErrorResponseEnum.INVALID_EMAIL);
         }
 
-        final ObjectMapper om = new ObjectMapper();
         List<String> subList = new ArrayList<>();
         try {
             subList = om.readValue(jsonSubscriptions, new TypeReference<List<String>>() {
             });
         } catch (final IOException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return "Badly formed unsubscription list";
+            return mapObjectToResponse(om, ErrorResponseEnum.INVALID_UNSUBSCRIBE_LIST);
         }
 
         subscriptionService.unsubscribe(email, subList);
 
-        try {
-            response.setStatus(HttpStatus.OK.value());
-            return om.writeValueAsString(subscriberRepository.findAll());
-        } catch (final JsonProcessingException e) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return "Jackson is having a bad day and I am too :( sorry";
-        }
+        // TODO: remove this and send an OK message - keep only for testing
+        response.setStatus(HttpStatus.OK.value());
+        return mapObjectToResponse(om, subscriberRepository.findAll());
     }
 
     private boolean isValidEmail(final String email) {
-        final Pattern p = Pattern.compile(".+@.+\\.[a-z]+");
-        final Matcher m = p.matcher(email);
-        final boolean matchFound = m.matches();
-        if (matchFound) {
-            return true;
-        } else {
-            return false;
+        final EmailValidator ev = EmailValidator.getInstance();
+        return ev.isValid(email);
+    }
+
+    // Object because I like to live dangerously
+    private String mapObjectToResponse(final ObjectMapper mapper, final Object obj) {
+        try {
+            return mapper.writeValueAsString(obj);
+        } catch (final JsonProcessingException e) {
+            return "{\"code\" : 500, \"message\": \"Server cannot process your request.\"}";
         }
     }
 }
