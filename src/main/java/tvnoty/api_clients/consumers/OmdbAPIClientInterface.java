@@ -1,10 +1,10 @@
-package tvnoty.api.consumers;
+package tvnoty.api_clients.consumers;
 
 import retrofit.Call;
 import retrofit.http.GET;
 import retrofit.http.Query;
-import tvnoty.api.models.omdb.SeasonData;
-import tvnoty.api.models.omdb.SeriesData;
+import tvnoty.api_clients.models.omdb.SeasonData;
+import tvnoty.api_clients.models.omdb.SeriesData;
 
 
 public interface OmdbAPIClientInterface {

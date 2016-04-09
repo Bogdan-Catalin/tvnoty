@@ -1,9 +1,7 @@
 package tvnoty.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +13,7 @@ import tvnoty.controllers.models.ErrorResponseEnum;
 import tvnoty.core.database.repositories.SubscriberRepository;
 import tvnoty.services.SeriesDataGatheringService;
 import tvnoty.services.SubscriptionService;
+import tvnoty.utils.TvnotyUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -41,11 +40,10 @@ public class SubscribeController {
         response.setCharacterEncoding("UTF-8");
 
         final ObjectMapper om = new ObjectMapper();
-        om.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
 
         if (!isValidEmail(email)) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return mapObjectToResponse(om, ErrorResponseEnum.INVALID_EMAIL);
+            return TvnotyUtils.mapObjectToRESTResponse(om, ErrorResponseEnum.INVALID_EMAIL);
         }
 
         List<String> subList = new ArrayList<>();
@@ -54,7 +52,7 @@ public class SubscribeController {
             });
         } catch (final IOException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return mapObjectToResponse(om, ErrorResponseEnum.INVALID_SUBSCRIBE_LIST);
+            return TvnotyUtils.mapObjectToRESTResponse(om, ErrorResponseEnum.INVALID_SUBSCRIBE_LIST);
         }
 
         subscriptionService.subscribe(email, subList);
@@ -62,7 +60,7 @@ public class SubscribeController {
 
         // TODO: remove this and send an OK message - keep only for testing
         response.setStatus(HttpStatus.OK.value());
-        return mapObjectToResponse(om, subscriberRepository.findAll());
+        return TvnotyUtils.mapObjectToRESTResponse(om, subscriberRepository.findAll());
     }
 
     @RequestMapping(value = "/unsubscribe", method = RequestMethod.POST)
@@ -76,7 +74,7 @@ public class SubscribeController {
 
         if (!isValidEmail(email)) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return mapObjectToResponse(om, ErrorResponseEnum.INVALID_EMAIL);
+            return TvnotyUtils.mapObjectToRESTResponse(om, ErrorResponseEnum.INVALID_EMAIL);
         }
 
         List<String> subList = new ArrayList<>();
@@ -85,27 +83,47 @@ public class SubscribeController {
             });
         } catch (final IOException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return mapObjectToResponse(om, ErrorResponseEnum.INVALID_UNSUBSCRIBE_LIST);
+            return TvnotyUtils.mapObjectToRESTResponse(om, ErrorResponseEnum.INVALID_UNSUBSCRIBE_LIST);
         }
 
         subscriptionService.unsubscribe(email, subList);
 
         // TODO: remove this and send an OK message - keep only for testing
         response.setStatus(HttpStatus.OK.value());
-        return mapObjectToResponse(om, subscriberRepository.findAll());
+        return TvnotyUtils.mapObjectToRESTResponse(om, subscriberRepository.findAll());
+    }
+
+    @RequestMapping(value = "/subscribe", method = RequestMethod.PUT)
+    public String putSubscribe(
+            @RequestParam(value = "email") final String email,
+            @RequestParam(value = "unsubscribe_list") final String jsonSubscriptions,
+            final HttpServletResponse response) {
+        response.setCharacterEncoding("UTF-8");
+
+        final ObjectMapper om = new ObjectMapper();
+
+        if (!isValidEmail(email)) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return TvnotyUtils.mapObjectToRESTResponse(om, ErrorResponseEnum.INVALID_EMAIL);
+        }
+
+        List<String> subList = new ArrayList<>();
+        try {
+            subList = om.readValue(jsonSubscriptions, new TypeReference<List<String>>() {
+            });
+        } catch (final IOException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return TvnotyUtils.mapObjectToRESTResponse(om, ErrorResponseEnum.INVALID_UNSUBSCRIBE_LIST);
+        }
+
+        subscriptionService.putSubscribe(email, subList);
+        // TODO: remove this and send an OK message - keep only for testing
+        response.setStatus(HttpStatus.OK.value());
+        return TvnotyUtils.mapObjectToRESTResponse(om, subscriberRepository.findAll());
     }
 
     private boolean isValidEmail(final String email) {
         final EmailValidator ev = EmailValidator.getInstance();
         return ev.isValid(email);
-    }
-
-    // Object because I like to live dangerously
-    private String mapObjectToResponse(final ObjectMapper mapper, final Object obj) {
-        try {
-            return mapper.writeValueAsString(obj);
-        } catch (final JsonProcessingException e) {
-            return "{\"code\" : 500, \"message\": \"Server cannot process your request.\"}";
-        }
     }
 }

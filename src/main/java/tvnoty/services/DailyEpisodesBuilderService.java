@@ -5,8 +5,8 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tvnoty.api.models.omdb.EpisodeData;
-import tvnoty.api.models.omdb.SeasonData;
+import tvnoty.api_clients.models.omdb.EpisodeData;
+import tvnoty.api_clients.models.omdb.SeasonData;
 import tvnoty.core.database.entities.DailyEpisode;
 import tvnoty.core.database.entities.Series;
 import tvnoty.core.database.repositories.DailyEpisodeRepository;
@@ -40,8 +40,8 @@ public class DailyEpisodesBuilderService {
                             final DailyEpisode de = new DailyEpisode();
                             de.setEpisode(episode.getEpisode());
                             de.setSeason(season.getSeason());
-                            de.setSeriesImdbId(serie.getImdbID());
-                            de.setSeriesName(serie.getTitle());
+                            de.setSeries_imdb_id(serie.getImdb_id());
+                            de.setSeries_name(serie.getTitle());
 
                             // TODO: populate with more data
                             dailyEpisodes.add(de);

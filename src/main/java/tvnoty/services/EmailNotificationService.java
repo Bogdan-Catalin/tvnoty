@@ -40,7 +40,7 @@ public class EmailNotificationService {
         for (final Subscriber subscriber : subscriberRepository.findAll()) {
             final List<DailyEpisode> toWatch = new ArrayList<>();
             for (final DailyEpisode de : dailyEpisodeRepository.findAll()) {
-                if (subscriber.getSubscriptions().contains(de.getSeriesImdbId())) {
+                if (subscriber.getSubscriptions().contains(de.getSeries_imdb_id())) {
                     toWatch.add(de);
                 }
             }
@@ -72,7 +72,7 @@ public class EmailNotificationService {
             if (de.getEpisode().toString().length() == 1) {
                 body.append("0");
             }
-            body.append(de.getEpisode() + " now airing for " + de.getSeriesName() + "<br>");
+            body.append(de.getEpisode() + " now airing for " + de.getSeries_name() + "<br>");
         }
 
         mail.setContent(body.toString(), "text/html");

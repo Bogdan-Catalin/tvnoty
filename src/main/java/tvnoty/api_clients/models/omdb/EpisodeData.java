@@ -1,4 +1,4 @@
-package tvnoty.api.models.omdb;
+package tvnoty.api_clients.models.omdb;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

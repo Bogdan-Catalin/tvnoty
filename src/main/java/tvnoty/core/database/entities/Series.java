@@ -2,29 +2,29 @@ package tvnoty.core.database.entities;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import tvnoty.api.models.omdb.SeasonData;
+import tvnoty.api_clients.models.omdb.SeasonData;
 
 import java.util.List;
 
 @Document(collection = "series")
 public class Series {
     @Id
-    private String imdbID;
+    private String imdb_id;
 
     private String title;
     private String year;
-    private String imdbRating;
+    private String imdb_rating;
     private String plot;
     private String poster;
 
     private List<SeasonData> seasons;
 
-    public String getImdbID() {
-        return imdbID;
+    public String getImdb_id() {
+        return imdb_id;
     }
 
-    public void setImdbID(final String imdbID) {
-        this.imdbID = imdbID;
+    public void setImdb_id(final String imdb_id) {
+        this.imdb_id = imdb_id;
     }
 
     public String getTitle() {
@@ -43,12 +43,12 @@ public class Series {
         this.year = year;
     }
 
-    public String getImdbRating() {
-        return imdbRating;
+    public String getImdb_rating() {
+        return imdb_rating;
     }
 
-    public void setImdbRating(final String imdbRating) {
-        this.imdbRating = imdbRating;
+    public void setImdb_rating(final String imdb_rating) {
+        this.imdb_rating = imdb_rating;
     }
 
     public String getPlot() {

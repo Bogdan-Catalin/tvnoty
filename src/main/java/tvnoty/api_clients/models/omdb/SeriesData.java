@@ -1,4 +1,4 @@
-package tvnoty.api.models.omdb;
+package tvnoty.api_clients.models.omdb;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import tvnoty.core.database.entities.Series;
@@ -38,8 +38,8 @@ public class SeriesData {
 
     public Series toMongoEntity() {
         final Series series = new Series();
-        series.setImdbID(imdbID);
-        series.setImdbRating(imdbRating);
+        series.setImdb_id(imdbID);
+        series.setImdb_rating(imdbRating);
         series.setPlot(plot);
         series.setPoster(poster);
         series.setTitle(title);

@@ -4,10 +4,10 @@ package tvnoty.services;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tvnoty.api.consumers.OmdbAPIClientImpl;
-import tvnoty.api.models.omdb.EpisodeData;
-import tvnoty.api.models.omdb.SeasonData;
-import tvnoty.api.models.omdb.SeriesData;
+import tvnoty.api_clients.consumers.OmdbAPIClientImpl;
+import tvnoty.api_clients.models.omdb.EpisodeData;
+import tvnoty.api_clients.models.omdb.SeasonData;
+import tvnoty.api_clients.models.omdb.SeriesData;
 import tvnoty.core.database.entities.Series;
 import tvnoty.core.database.entities.Subscriber;
 import tvnoty.core.database.repositories.SeriesRepository;
@@ -64,10 +64,10 @@ public class SeriesDataGatheringService {
     }
 
     private void saveToDb(final Series series) {
-        if (seriesRepository.findOne(series.getImdbID()) == null) {
+        if (seriesRepository.findOne(series.getImdb_id()) == null) {
             seriesRepository.insert(series);
         } else {
-            final Series existing = seriesRepository.findOne(series.getImdbID());
+            final Series existing = seriesRepository.findOne(series.getImdb_id());
             series.getSeasons().addAll(existing.getSeasons());
             seriesRepository.save(series);
         }

@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Document(collection = "subscribers")
 public class Subscriber {
-    private final Set<String> imdbCodes;
+    private Set<String> imdb_codes;
 
     @Id
     private String id;
@@ -17,7 +17,7 @@ public class Subscriber {
     private String email;
 
     public Subscriber() {
-        imdbCodes = new HashSet<>();
+        imdb_codes = new HashSet<>();
     }
 
     public String getEmail() {
@@ -38,21 +38,26 @@ public class Subscriber {
 
     public void subscribe(final List<String> imdbCodes) {
         for (final String imdbCode : imdbCodes) {
-            this.imdbCodes.add(imdbCode);
+            this.imdb_codes.add(imdbCode);
         }
     }
 
     public void unsubscribe(final List<String> imdbCodes) {
         for (final String imdbCode : imdbCodes)
-            while (this.imdbCodes.remove(imdbCode)) {
+            while (this.imdb_codes.remove(imdbCode)) {
             }
     }
 
     public void unsubscribeAll() {
-        imdbCodes.clear();
+        imdb_codes.clear();
+    }
+
+    public void setImdb_codes(final Set<String> imdb_codes) {
+        this.imdb_codes = imdb_codes;
     }
 
     public Set<String> getSubscriptions() {
-        return imdbCodes;
+        return imdb_codes;
     }
+
 }

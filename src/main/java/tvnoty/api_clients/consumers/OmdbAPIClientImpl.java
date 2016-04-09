@@ -1,4 +1,4 @@
-package tvnoty.api.consumers;
+package tvnoty.api_clients.consumers;
 
 
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -7,8 +7,8 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
 import org.springframework.stereotype.Service;
 import retrofit.JacksonConverterFactory;
 import retrofit.Retrofit;
-import tvnoty.api.models.omdb.SeasonData;
-import tvnoty.api.models.omdb.SeriesData;
+import tvnoty.api_clients.models.omdb.SeasonData;
+import tvnoty.api_clients.models.omdb.SeriesData;
 
 import java.io.IOException;
 

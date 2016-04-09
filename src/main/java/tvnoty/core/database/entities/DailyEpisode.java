@@ -11,20 +11,20 @@ public class DailyEpisode {
     @Generated(value = "AUTO")
     private String id;
 
-    private String seriesImdbId;
+    private String series_imdb_id;
 
-    private String seriesName;
+    private String series_name;
 
     private Integer season;
 
     private Integer episode;
 
-    public String getSeriesImdbId() {
-        return seriesImdbId;
+    public String getSeries_imdb_id() {
+        return series_imdb_id;
     }
 
-    public void setSeriesImdbId(final String seriesImdbId) {
-        this.seriesImdbId = seriesImdbId;
+    public void setSeries_imdb_id(final String series_imdb_id) {
+        this.series_imdb_id = series_imdb_id;
     }
 
     public String getId() {
@@ -35,12 +35,12 @@ public class DailyEpisode {
         this.id = id;
     }
 
-    public String getSeriesName() {
-        return seriesName;
+    public String getSeries_name() {
+        return series_name;
     }
 
-    public void setSeriesName(final String seriesName) {
-        this.seriesName = seriesName;
+    public void setSeries_name(final String series_name) {
+        this.series_name = series_name;
     }
 
     public Integer getSeason() {
