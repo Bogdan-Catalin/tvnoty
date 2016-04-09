@@ -96,7 +96,7 @@ public class SubscribeController {
     @RequestMapping(value = "/subscribe", method = RequestMethod.PUT)
     public String putSubscribe(
             @RequestParam(value = "email") final String email,
-            @RequestParam(value = "unsubscribe_list") final String jsonSubscriptions,
+            @RequestParam(value = "subscribe_list") final String jsonSubscriptions,
             final HttpServletResponse response) {
         response.setCharacterEncoding("UTF-8");
 
@@ -113,7 +113,7 @@ public class SubscribeController {
             });
         } catch (final IOException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return TvnotyUtils.mapObjectToRESTResponse(om, ErrorResponseEnum.INVALID_UNSUBSCRIBE_LIST);
+            return TvnotyUtils.mapObjectToRESTResponse(om, ErrorResponseEnum.INVALID_SUBSCRIBE_LIST);
         }
 
         subscriptionService.putSubscribe(email, subList);
