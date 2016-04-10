@@ -17,7 +17,7 @@ public class DailyGatheringAndNotificationJob {
     @Autowired
     private EmailNotificationService notificationService;
 
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 0 0 * * *", zone = "UTC")
     public void gatherSeriesData() {
         // TODO: after gathering enough data, run this job weekly
         LOGGER.info("Executing scheduled data gathering task.");
