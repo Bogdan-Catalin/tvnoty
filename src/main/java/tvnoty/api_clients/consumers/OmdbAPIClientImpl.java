@@ -7,8 +7,8 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
 import org.springframework.stereotype.Service;
 import retrofit.JacksonConverterFactory;
 import retrofit.Retrofit;
-import tvnoty.api_clients.models.omdb.SeasonData;
-import tvnoty.api_clients.models.omdb.SeriesData;
+import tvnoty.api_clients.models.omdb.SeasonResponse;
+import tvnoty.api_clients.models.omdb.SeriesResponse;
 
 import java.io.IOException;
 
@@ -29,11 +29,11 @@ public class OmdbAPIClientImpl {
         client = retrofit.create(OmdbAPIClientInterface.class);
     }
 
-    public SeriesData getSeriesData(final String imdbId) throws IOException {
+    public SeriesResponse getSeriesData(final String imdbId) throws IOException {
         return client.getSeriesData(imdbId).execute().body();
     }
 
-    public SeasonData getSeasonData(final String imdbId, final Integer seasonNo) throws IOException {
+    public SeasonResponse getSeasonData(final String imdbId, final Integer seasonNo) throws IOException {
         return client.getSeasonData(imdbId, seasonNo).execute().body();
     }
 }

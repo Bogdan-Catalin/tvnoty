@@ -44,7 +44,7 @@ public class SubscribeController {
 
         List<String> subList = new ArrayList<>();
         try {
-            subList = om.readValue(jsonSubscriptions, new TypeReference<List<String>>() {
+            subList = om.readValue(jsonSubscriptions.trim(), new TypeReference<List<String>>() {
             });
         } catch (final IOException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -73,7 +73,7 @@ public class SubscribeController {
 
         List<String> subList = new ArrayList<>();
         try {
-            subList = om.readValue(jsonSubscriptions, new TypeReference<List<String>>() {
+            subList = om.readValue(jsonSubscriptions.trim(), new TypeReference<List<String>>() {
             });
         } catch (final IOException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -86,7 +86,7 @@ public class SubscribeController {
         return TvnotyUtils.mapObjectToRESTResponse(om, RESTResponseEnum.SUBSCRIBE_OK);
     }
 
-    @RequestMapping(value = "get_subscriptions", method = RequestMethod.GET)
+    @RequestMapping(value = "/get_subscriptions", method = RequestMethod.GET)
     public String getSubscriptions(
             @RequestParam(value = "email") final String email,
             final HttpServletResponse response) {
@@ -125,7 +125,7 @@ public class SubscribeController {
 
         List<String> subList = new ArrayList<>();
         try {
-            subList = om.readValue(jsonSubscriptions, new TypeReference<List<String>>() {
+            subList = om.readValue(jsonSubscriptions.trim(), new TypeReference<List<String>>() {
             });
         } catch (final IOException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());

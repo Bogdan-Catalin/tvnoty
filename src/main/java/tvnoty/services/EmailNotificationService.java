@@ -58,6 +58,7 @@ public class EmailNotificationService {
     private void sendEmail(final Subscriber to, final List<DailyEpisode> episodes) throws MessagingException {
         final MimeMessage mail = mailSender.createMimeMessage();
         final MimeMessageHelper helper = new MimeMessageHelper(mail, true);
+        LOGGER.info("Sending email to " + to.getEmail() + " for " + episodes.size() + " episodes.");
         helper.setTo(to.getEmail());
         helper.setSubject("[tvnoty] New episodes available for " + getTommorrowsDate());
         final StringBuilder body = new StringBuilder();

@@ -5,9 +5,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tvnoty.api_clients.consumers.OmdbAPIClientImpl;
-import tvnoty.api_clients.models.omdb.EpisodeData;
-import tvnoty.api_clients.models.omdb.SeasonData;
-import tvnoty.api_clients.models.omdb.SeriesData;
+import tvnoty.api_clients.models.omdb.EpisodeResponse;
+import tvnoty.api_clients.models.omdb.SeasonResponse;
+import tvnoty.api_clients.models.omdb.SeriesResponse;
 import tvnoty.core.database.entities.Series;
 import tvnoty.core.database.entities.Subscriber;
 import tvnoty.core.database.repositories.SeriesRepository;
@@ -64,23 +64,27 @@ public class SeriesDataGatheringService {
     }
 
     private void saveToDb(final Series series) {
-        if (seriesRepository.findOne(series.getImdb_id()) == null) {
+        LOGGER.info("Saving to database series with IMDB id " + series.getImdb_id());
+        final Series existing = seriesRepository.findByImdbId(series.getImdb_id());
+        if (existing == null || existing.getImdb_id() == null) {
+            LOGGER.info("Series not found, creating.");
             seriesRepository.insert(series);
         } else {
-            final Series existing = seriesRepository.findOne(series.getImdb_id());
+            LOGGER.info("Series found, updating.");
             series.getSeasons().addAll(existing.getSeasons());
             seriesRepository.save(series);
         }
     }
 
     private Series getFromAPI(final String imdbId) throws IOException {
-        final SeriesData seriesData = omdbAPIClient.getSeriesData(imdbId);
+        LOGGER.info("Getting from OMDB data for " + imdbId);
+        final SeriesResponse seriesData = omdbAPIClient.getSeriesData(imdbId);
         if (seriesData.getImdbID() == null) {
             return null;
         }
-        final List<SeasonData> seasons = new ArrayList<>();
+        final List<SeasonResponse> seasons = new ArrayList<>();
         for (Integer i = getSeasonToPull(imdbId); ; i++) {
-            final SeasonData sd = omdbAPIClient.getSeasonData(imdbId, i);
+            final SeasonResponse sd = omdbAPIClient.getSeasonData(imdbId, i);
             if (sd.getEpisodes() == null) {
                 break;
             } else {
@@ -111,7 +115,7 @@ public class SeriesDataGatheringService {
                 return 1;
             } else {
                 for (int i = 1; i < series.getSeasons().size(); i++) {
-                    for (final EpisodeData ed : series.getSeasons().get(i).getEpisodes()) {
+                    for (final EpisodeResponse ed : series.getSeasons().get(i).getEpisodes()) {
                         // TODO: use proper timestamp check to see what release is not announced
                         // TODO: do series release date vary ? 
                         if (ed.getReleased().toLowerCase().equals("n/a")) {

@@ -2,7 +2,7 @@ package tvnoty.core.database.entities;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import tvnoty.api_clients.models.omdb.SeasonData;
+import tvnoty.api_clients.models.omdb.SeasonResponse;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public class Series {
     private String plot;
     private String poster;
 
-    private List<SeasonData> seasons;
+    private List<SeasonResponse> seasons;
 
     public String getImdb_id() {
         return imdb_id;
@@ -67,11 +67,24 @@ public class Series {
         this.poster = poster;
     }
 
-    public List<SeasonData> getSeasons() {
+    public List<SeasonResponse> getSeasons() {
         return seasons;
     }
 
-    public void setSeasons(final List<SeasonData> seasons) {
+    public void setSeasons(final List<SeasonResponse> seasons) {
         this.seasons = seasons;
+    }
+
+    @Override
+    public String toString() {
+        return "Series{" +
+                "imdb_id='" + imdb_id + '\'' +
+                ", title='" + title + '\'' +
+                ", year='" + year + '\'' +
+                ", imdb_rating='" + imdb_rating + '\'' +
+                ", plot='" + plot + '\'' +
+                ", poster='" + poster + '\'' +
+                ", seasons=" + seasons +
+                '}';
     }
 }

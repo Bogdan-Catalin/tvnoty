@@ -5,8 +5,8 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tvnoty.api_clients.models.omdb.EpisodeData;
-import tvnoty.api_clients.models.omdb.SeasonData;
+import tvnoty.api_clients.models.omdb.EpisodeResponse;
+import tvnoty.api_clients.models.omdb.SeasonResponse;
 import tvnoty.core.database.entities.DailyEpisode;
 import tvnoty.core.database.entities.Series;
 import tvnoty.core.database.repositories.DailyEpisodeRepository;
@@ -26,13 +26,14 @@ public class DailyEpisodesBuilderService {
     private SeriesRepository seriesRepository;
 
     public void buildDailyEpisodeList() {
+        LOGGER.info("Building daily episode list.");
         dailyRepository.deleteAll();
         final List<DailyEpisode> dailyEpisodes = new ArrayList<>();
         final List<Series> series = seriesRepository.findAll();
         for (final Series serie : series) {
-            for (final SeasonData season : serie.getSeasons()) {
+            for (final SeasonResponse season : serie.getSeasons()) {
                 boolean breakSeason = false;
-                for (final EpisodeData episode : season.getEpisodes()) {
+                for (final EpisodeResponse episode : season.getEpisodes()) {
                     if (!episode.getReleased().toLowerCase().equals("n/a")) {
                         final DateTime current = new DateTime();
                         final DateTime episodeRelease = new DateTime(episode.getReleased());
@@ -44,6 +45,7 @@ public class DailyEpisodesBuilderService {
                             de.setSeries_name(serie.getTitle());
 
                             // TODO: populate with more data
+                            LOGGER.info("Added daily episode for " + de.getSeries_name());
                             dailyEpisodes.add(de);
                         }
                     } else {
