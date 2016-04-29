@@ -75,6 +75,27 @@ public class Series {
         this.seasons = seasons;
     }
 
+    /**
+     * Replaces seasons in list by their season number.
+     * If Series object does not contain season with number, the new season will just be added to the list.
+     */
+    public void replaceSeasons(final List<SeasonResponse> replaceList) {
+        for (final SeasonResponse replace : replaceList) {
+            final Integer seasonNo = replace.getSeason();
+            boolean foundReplacement = false;
+            for (int i = 0; i < seasons.size(); i++) {
+                if (seasons.get(i).getSeason() == seasonNo) {
+                    seasons.set(i, replace);
+                    foundReplacement = true;
+                    break;
+                }
+            }
+            if (!foundReplacement) {
+                seasons.add(replace);
+            }
+        }
+    }
+
     @Override
     public String toString() {
         return "Series{" +

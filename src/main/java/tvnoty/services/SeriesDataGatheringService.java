@@ -71,7 +71,7 @@ public class SeriesDataGatheringService {
             seriesRepository.insert(series);
         } else {
             LOGGER.info("Series found, updating.");
-            series.getSeasons().addAll(existing.getSeasons());
+            series.replaceSeasons(existing.getSeasons());
             seriesRepository.save(series);
         }
     }
